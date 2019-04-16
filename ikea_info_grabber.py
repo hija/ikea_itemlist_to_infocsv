@@ -31,7 +31,7 @@ def _parse_product(itemjson, debug_attributes = False):
     info_dict = {'product_name': f"{attributejson['name']} {attributejson['type_name']}",
                 'product_category': _parse_multi_property(attributejson['catalog_name']),
                 'product_price': attributejson['price'],
-                'product_color': _parse_multi_property(attributejson['color_name']),
+                'product_color': attributejson['valid_design_text'], #_parse_multi_property(attributejson['color_name']),
                 'product_id': _parse_id(attributejson['id']),
                 'is_online_sellable': attributejson['online_sellable'],
                 'is_family_price': attributejson['is_family_price']}
