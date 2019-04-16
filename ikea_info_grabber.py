@@ -12,15 +12,27 @@ def _parse_multi_property(property_element):
     else:
         return property_element.strip()
 
-def _parse_product(itemjson):
+def _parse_id(idstr):
+    """
+    Converts an id string, e.g. 12345678, to the IKEA item id format, e.g. 123.456.78
+    """
+    p1 = idstr[0:3]
+    p2 = idstr[3:6]
+    p3 = idstr[6:]
+    return f'{p1}.{p2}.{p3}'
+
+def _parse_product(itemjson, debug_attributes = False):
     """
     Parses the json of a product into a condensed, relevant-information-only dictionary with consistent naming
     """
     attributejson = itemjson['attributes']
-    info_dict = {'product_name': attributejson['name'],
+    if debug_attributes:
+        pprint.pprint(attributejson)
+    info_dict = {'product_name': f"{attributejson['name']} {attributejson['type_name']}",
                 'product_category': _parse_multi_property(attributejson['catalog_name']),
                 'product_price': attributejson['price'],
                 'product_color': _parse_multi_property(attributejson['color_name']),
+                'product_id': _parse_id(attributejson['id']),
                 'is_online_sellable': attributejson['online_sellable'],
                 'is_family_price': attributejson['is_family_price']}
     return info_dict
@@ -39,3 +51,6 @@ def get_product_info(itemcode, market='DE'):
         parsed_products.append(_parse_product(product))
 
     return parsed_products
+
+if __name__ == '__main__':
+    pprint.pprint(get_product_info('002.638.50'))
