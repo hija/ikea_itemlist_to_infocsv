@@ -30,6 +30,7 @@ def get_product_info(itemcode, market='DE'):
     Returns a list of dictionaries with each of them containing information about IKEA items
     """
     requests_parameters = {'market': market, 'arg.search_prefix': itemcode, 'arg.filter': f"market:'{market}'"}
+    #TODO: Get the search API somewhat more dynamically (not hardcoding), e.g. from IKEA website
     rq = requests.get('https://w102a21be.api.esales.apptus.cloud/api/v1/panels/instant-search', params=requests_parameters)
     rq_response_json = rq.json()
 
