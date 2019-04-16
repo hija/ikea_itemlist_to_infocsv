@@ -1,16 +1,16 @@
 import requests
 import pprint
 
-def _parse_product_catergory(catalog_name):
+def _parse_multi_property(property_element):
     """
-    Parses a product category to a human readable category
+    Parses a |-separated property element to a single property using only the first property
     """
-    if '|' in catalog_name:
+    if '|' in property_element:
         # Return only main category, i.e.
         #'Bettsofas & -sessel|Sofas & Polstergruppen' ==> Bettsofas & -sessel
-        return catalog_name.split('|')[0].strip()
+        return property_element.split('|')[0].strip()
     else:
-        return catalog_name.strip()
+        return property_element.strip()
 
 def _parse_product(itemjson):
     """
@@ -18,9 +18,9 @@ def _parse_product(itemjson):
     """
     attributejson = itemjson['attributes']
     info_dict = {'product_name': attributejson['name'],
-                'product_category': _parse_product_catergory(attributejson['catalog_name']),
+                'product_category': _parse_multi_property(attributejson['catalog_name']),
                 'product_price': attributejson['price'],
-                'product_color': attributejson['color_name'],
+                'product_color': _parse_multi_property(attributejson['color_name']),
                 'is_online_sellable': attributejson['online_sellable'],
                 'is_family_price': attributejson['is_family_price']}
     return info_dict
