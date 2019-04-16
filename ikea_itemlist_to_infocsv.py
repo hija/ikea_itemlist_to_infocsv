@@ -18,11 +18,19 @@ if __name__ == '__main__':
 
         # First we collect the information
         product_information = []
+        cache = dict()
+
         with open(args.inputfile) as inputfile:
             for line in inputfile:
                 if re.fullmatch('\d{3}\.\d{3}\.\d{2}', line.strip()):
                     print('[INFO] Found productid:', line.strip())
-                    single_product_information = ikea_info_grabber.get_product_info(line.strip())
+
+                    # Get it from cache or download information (dict.get(key, default))
+                    single_product_information = cache.get(line.strip(), ikea_info_grabber.get_product_info(line.strip()))
+
+                    # Put it into cache
+                    cache[line.strip()] = single_product_information
+
                     if len(single_product_information) > 1:
                         print('[INFO] Query for product', line.strip(), 'returned more than one product. Every product returned will be added. The number of rows in the csv file might be greater than the input file')
                     elif len(single_product_information) == 0:
