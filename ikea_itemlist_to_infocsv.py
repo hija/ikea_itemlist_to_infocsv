@@ -25,18 +25,20 @@ if __name__ == '__main__':
                 if re.fullmatch('\d{3}\.\d{3}\.\d{2}', line.strip()):
                     print('[INFO] Found productid:', line.strip())
 
-                    # Get it from cache or download information (dict.get(key, default))
-                    single_product_information = cache.get(line.strip(), ikea_info_grabber.get_product_info(line.strip()))
+                    single_product_information = None # Will be set in next step
 
-                    # Put it into cache
-                    cache[line.strip()] = single_product_information
+                    if line.strip() in cache: # Entry exists in cache
+                        single_product_information = cache.get(line.strip())
+                    else:
+                        time.sleep(1) # Sleep to not DoS IKEA's server
+                        single_product_information = ikea_info_grabber.get_product_info(line.strip())
+                        cache[line.strip()] = single_product_information # Add to cache
 
                     if len(single_product_information) > 1:
                         print('[INFO] Query for product', line.strip(), 'returned more than one product. Every product returned will be added. The number of rows in the csv file might be greater than the input file')
                     elif len(single_product_information) == 0:
                         print('[INFO] Query for product', line.strip(), 'returned no result. It will not be contained in the output csv.')
                     product_information.extend(single_product_information)
-                    time.sleep(1) # Wait 1 second to not DoS IKEA's server
 
         # Then we write it into the csv
         if len(product_information) > 0:
