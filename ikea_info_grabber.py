@@ -2,6 +2,9 @@ import requests
 import pprint
 
 def _parse_product_catergory(catalog_name):
+    """
+    Parses a product category to a human readable category
+    """
     if '|' in catalog_name:
         # Return only main category, i.e.
         #'Bettsofas & -sessel|Sofas & Polstergruppen' ==> Bettsofas & -sessel
@@ -23,11 +26,15 @@ def _parse_product(itemjson):
     return info_dict
 
 def get_product_info(itemcode, market='DE'):
+    """
+    Returns a list of dictionaries with each of them containing information about IKEA items
+    """
     requests_parameters = {'market': market, 'arg.search_prefix': itemcode, 'arg.filter': f"market:'{market}'"}
     rq = requests.get('https://w102a21be.api.esales.apptus.cloud/api/v1/panels/instant-search', params=requests_parameters)
     rq_response_json = rq.json()
 
+    parsed_products = []
     for product in rq_response_json['productSuggestions'][0]['products']:
-        pprint.pprint(_parse_product(product))
+        parsed_products.append(_parse_product(product))
 
-get_product_info('502.846.47')
+    return parsed_products
